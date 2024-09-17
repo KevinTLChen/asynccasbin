@@ -1,0 +1,7 @@
+p, admin, domain.*, data1, read
+p, user, domain.*, data3, read
+p, user, domain.1, data2, read
+p, user, domain.1, data2, write
+
+g, alice, user, *
+g, bob, admin, domain.3

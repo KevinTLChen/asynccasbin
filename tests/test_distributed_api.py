@@ -1,20 +1,33 @@
+# Copyright 2021 The casbin Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import casbin
 from tests.test_enforcer import get_examples, TestCaseBase
 
 
 class TestDistributedApi(TestCaseBase):
-    def get_enforcer(self, model=None, adapter=None):
-        return casbin.DistributedEnforcer(
+    async def get_enforcer(self, model=None, adapter=None):
+        # create an instance of class, use await with the factory method
+        return await casbin.DistributedEnforcer.create(
             model,
             adapter,
         )
 
-    def test(self):
-        e = self.get_enforcer(
-            get_examples("rbac_model.conf"), get_examples("rbac_policy.csv")
-        )
+    async def test(self):
+        e = await self.get_enforcer(get_examples("rbac_model.conf"), get_examples("rbac_policy.csv"))
 
-        e.add_policy_self(
+        await e.add_policy_self(
             False,
             "p",
             "p",
@@ -25,7 +38,7 @@ class TestDistributedApi(TestCaseBase):
                 ["data2_admin", "data2", "write"],
             ],
         )
-        e.add_policy_self(False, "g", "g", [["alice", "data2_admin"]])
+        await e.add_policy_self(False, "g", "g", [["alice", "data2_admin"]])
 
         self.assertTrue(e.enforce("alice", "data1", "read"))
         self.assertFalse(e.enforce("alice", "data1", "write"))
@@ -36,12 +49,8 @@ class TestDistributedApi(TestCaseBase):
         self.assertTrue(e.enforce("alice", "data2", "read"))
         self.assertTrue(e.enforce("alice", "data2", "write"))
 
-        e.update_policy_self(
-            False, "p", "p", ["alice", "data1", "read"], ["alice", "data1", "write"]
-        )
-        e.update_policy_self(
-            False, "g", "g", ["alice", "data2_admin"], ["tom", "alice"]
-        )
+        await e.update_policy_self(False, "p", "p", ["alice", "data1", "read"], ["alice", "data1", "write"])
+        await e.update_policy_self(False, "g", "g", ["alice", "data2_admin"], ["tom", "alice"])
 
         self.assertFalse(e.enforce("alice", "data1", "read"))
         self.assertTrue(e.enforce("alice", "data1", "write"))
@@ -52,8 +61,7 @@ class TestDistributedApi(TestCaseBase):
         self.assertFalse(e.enforce("tom", "data1", "read"))
         self.assertTrue(e.enforce("tom", "data1", "write"))
 
-        e.remove_policy_self(False, "p", "p", [["alice", "data1", "write"]])
-        e.remove_policy_self(False, "g", "g", [["alice", "data2_admin"]])
+        await e.remove_policy_self(False, "p", "p", [["alice", "data1", "write"]])
 
         self.assertFalse(e.enforce("alice", "data1", "read"))
         self.assertFalse(e.enforce("alice", "data1", "write"))
@@ -64,8 +72,8 @@ class TestDistributedApi(TestCaseBase):
         self.assertFalse(e.enforce("alice", "data2", "read"))
         self.assertFalse(e.enforce("alice", "data2", "write"))
 
-        e.remove_filtered_policy_self(False, "p", "p", 0, "bob", "data2", "write")
-        e.remove_filtered_policy_self(False, "g", "g", 0, "tom", "data2_admin")
+        await e.remove_filtered_policy_self(False, "p", "p", 0, "bob", "data2", "write")
+        await e.remove_filtered_policy_self(False, "g", "g", 0, "tom", "data2_admin")
 
         self.assertFalse(e.enforce("alice", "data1", "read"))
         self.assertFalse(e.enforce("alice", "data1", "write"))
@@ -76,7 +84,7 @@ class TestDistributedApi(TestCaseBase):
         self.assertFalse(e.enforce("tom", "data1", "read"))
         self.assertFalse(e.enforce("tom", "data1", "write"))
 
-        e.clear_policy_self(False)
+        await e.clear_policy_self(False)
         self.assertFalse(e.enforce("alice", "data1", "read"))
         self.assertFalse(e.enforce("alice", "data1", "write"))
         self.assertFalse(e.enforce("bob", "data2", "read"))

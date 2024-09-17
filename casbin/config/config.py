@@ -1,3 +1,17 @@
+# Copyright 2021 The casbin Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from io import StringIO
 
 
@@ -63,11 +77,7 @@ class Config:
                 break
             line = line.strip()
 
-            if (
-                "" == line
-                or self.DEFAULT_COMMENT == line[0:1]
-                or self.DEFAULT_COMMENT_SEM == line[0:1]
-            ):
+            if "" == line or self.DEFAULT_COMMENT == line[0:1] or self.DEFAULT_COMMENT_SEM == line[0:1]:
                 can_write = True
                 continue
             elif "[" == line[0:1] and "]" == line[-1]:
@@ -86,18 +96,13 @@ class Config:
                 buf.append(p)
 
     def _write(self, section, line_num, b):
-
         buf = "".join(b)
         if len(buf) <= 0:
             return
         option_val = buf.split("=", 1)
 
         if len(option_val) != 2:
-            raise RuntimeError(
-                "parse the content error : line {} , {} = ?".format(
-                    line_num, option_val[0]
-                )
-            )
+            raise RuntimeError("parse the content error : line {} , {} = ?".format(line_num, option_val[0]))
 
         option = option_val[0].strip()
         value = option_val[1].strip()

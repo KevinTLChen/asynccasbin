@@ -1,3 +1,18 @@
+# Copyright 2021 The casbin Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 def load_policy_line(line, model):
     """loads a text line as a policy rule to model."""
 
@@ -7,7 +22,25 @@ def load_policy_line(line, model):
     if line[:1] == "#":
         return
 
-    tokens = line.split(", ")
+    stack = []
+    tokens = []
+    for c in line:
+        if c == "[" or c == "(":
+            stack.append(c)
+            tokens[-1] += c
+        elif c == "]" or c == ")":
+            stack.pop()
+            tokens[-1] += c
+        elif c == "," and len(stack) == 0:
+            tokens.append("")
+        else:
+            if len(tokens) == 0:
+                tokens.append(c)
+            else:
+                tokens[-1] += c
+
+    tokens = [x.strip() for x in tokens]
+
     key = tokens[0]
     sec = key[0]
 
@@ -39,9 +72,7 @@ class Adapter:
         """removes a policy rule from the storage."""
         pass
 
-    async def remove_filtered_policy(
-        self, sec, ptype, field_index, *field_values
-    ):
+    async def remove_filtered_policy(self, sec, ptype, field_index, *field_values):
         """removes policy rules that match the filter from the storage.
         This is part of the Auto-Save feature.
         """

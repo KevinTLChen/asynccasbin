@@ -1,3 +1,17 @@
+# Copyright 2021 The casbin Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from collections import OrderedDict
 import re
 
@@ -6,9 +20,19 @@ eval_reg = re.compile(r"\beval\((?P<rule>[^)]*)\)")
 
 def escape_assertion(s):
     """escapes the dots in the assertion, because the expression evaluation doesn't support such variable names."""
+    eval_p = re.search(r"\bp(\d*)\.", s)
+    if eval_p is not None:
+        p_suffix = eval_p.group(1)
+        p_before = re.compile(f"\\bp{p_suffix}\\.")
+        p_after = f"p{p_suffix}_"
+        s = re.sub(p_before, p_after, s)
 
-    s = re.sub(r"\br\.", "r_", s)
-    s = re.sub(r"\bp\.", "p_", s)
+    eval_r = re.search(r"\br(\d*)\.", s)
+    if eval_r is not None:
+        r_suffix = eval_r.group(1)
+        r_before = re.compile(f"\\br{r_suffix}\\.")
+        r_after = f"r{r_suffix}_"
+        s = re.sub(r_before, r_after, s)
 
     return s
 
@@ -60,7 +84,7 @@ def has_eval(s):
 
 
 def replace_eval(expr, rules):
-    """replace all occurrences of function eval with rules"""
+    """replace all occurences of function eval with rules"""
     pos = 0
     match = eval_reg.search(expr, pos)
     while match:

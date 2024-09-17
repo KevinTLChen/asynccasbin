@@ -1,3 +1,18 @@
+# Copyright 2021 The casbin Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import asyncio
 import threading
 import time
 
@@ -22,6 +37,10 @@ class AtomicBool:
 
 
 class PolicyLoaderThread(threading.Thread):
+    """
+    use eventloop to async load policy
+    """
+
     def __init__(self, enforcer, interval=10):
         super(PolicyLoaderThread, self).__init__(daemon=True)
         self._interval = interval
@@ -50,7 +69,6 @@ class PolicyLoaderThread(threading.Thread):
 
 
 class SyncedEnforcer:
-
     """SyncedEnforcer wraps Enforcer and provides synchronized access.
     It's also a drop-in replacement for Enforcer"""
 
@@ -69,7 +87,10 @@ class SyncedEnforcer:
     def _auto_load_policy(self, interval):
         while self.is_auto_loading_running():
             time.sleep(interval)
-            self.load_policy()
+            try:
+                self.load_policy()
+            except Exception as e:
+                self._e.logger.error(repr(e))
 
     def start_auto_load_policy(self, interval):
         """starts a thread that will call load_policy every interval seconds"""
@@ -136,17 +157,17 @@ class SyncedEnforcer:
         with self._wl:
             return self._e.clear_policy()
 
-    def load_policy(self):
+    async def load_policy(self):
         """reloads the policy from file/database."""
         with self._wl:
-            return self._e.load_policy()
+            return await self._e.load_policy()
 
-    def load_filtered_policy(self, filter):
+    async def load_filtered_policy(self, filter):
         """ "reloads a filtered policy from file/database."""
         with self._wl:
-            return self._e.load_filtered_policy(filter)
+            return await self._e.load_filtered_policy(filter)
 
-    def save_policy(self):
+    async def save_policy(self):
         with self._rl:
             return self._e.save_policy()
 
@@ -169,6 +190,13 @@ class SyncedEnforcer:
         """
         with self._rl:
             return self._e.enforce_ex(*rvals)
+
+    def batch_enforce(self, rvals):
+        """batch_enforce enforce in batches,
+        input parameters are usually: [(sub, obj, act), (sub, obj, act), ...].
+        """
+        with self._rl:
+            return self._e.batch_enforce(rvals)
 
     def get_all_subjects(self):
         """gets the list of subjects that show up in the current policy."""
@@ -228,9 +256,7 @@ class SyncedEnforcer:
     def get_filtered_named_policy(self, ptype, field_index, *field_values):
         """gets all the authorization rules in the named policy, field filters can be specified."""
         with self._rl:
-            return self._e.get_filtered_named_policy(
-                ptype, field_index, *field_values
-            )
+            return self._e.get_filtered_named_policy(ptype, field_index, *field_values)
 
     def get_grouping_policy(self):
         """gets all the role inheritance rules in the policy."""
@@ -240,23 +266,17 @@ class SyncedEnforcer:
     def get_filtered_grouping_policy(self, field_index, *field_values):
         """gets all the role inheritance rules in the policy, field filters can be specified."""
         with self._rl:
-            return self._e.get_filtered_grouping_policy(
-                field_index, *field_values
-            )
+            return self._e.get_filtered_grouping_policy(field_index, *field_values)
 
     def get_named_grouping_policy(self, ptype):
         """gets all the role inheritance rules in the policy."""
         with self._rl:
             return self._e.get_named_grouping_policy(ptype)
 
-    def get_filtered_named_grouping_policy(
-        self, ptype, field_index, *field_values
-    ):
+    def get_filtered_named_grouping_policy(self, ptype, field_index, *field_values):
         """gets all the role inheritance rules in the policy, field filters can be specified."""
         with self._rl:
-            return self._e.get_filtered_named_grouping_policy(
-                ptype, field_index, *field_values
-            )
+            return self._e.get_filtered_named_grouping_policy(ptype, field_index, *field_values)
 
     def has_policy(self, *params):
         """determines whether an authorization rule exists."""
@@ -302,9 +322,7 @@ class SyncedEnforcer:
     def remove_filtered_named_policy(self, ptype, field_index, *field_values):
         """removes an authorization rule from the current named policy, field filters can be specified."""
         with self._wl:
-            return self._e.remove_filtered_named_policy(
-                ptype, field_index, *field_values
-            )
+            return self._e.remove_filtered_named_policy(ptype, field_index, *field_values)
 
     def has_grouping_policy(self, *params):
         """determines whether a role inheritance rule exists."""
@@ -340,23 +358,17 @@ class SyncedEnforcer:
     def remove_filtered_grouping_policy(self, field_index, *field_values):
         """removes a role inheritance rule from the current policy, field filters can be specified."""
         with self._wl:
-            return self._e.remove_filtered_grouping_policy(
-                field_index, *field_values
-            )
+            return self._e.remove_filtered_grouping_policy(field_index, *field_values)
 
     def remove_named_grouping_policy(self, ptype, *params):
         """removes a role inheritance rule from the current named policy."""
         with self._wl:
             return self._e.remove_named_grouping_policy(ptype, *params)
 
-    def remove_filtered_named_grouping_policy(
-        self, ptype, field_index, *field_values
-    ):
+    def remove_filtered_named_grouping_policy(self, ptype, field_index, *field_values):
         """removes a role inheritance rule from the current named policy, field filters can be specified."""
         with self._wl:
-            return self._e.remove_filtered_named_grouping_policy(
-                ptype, field_index, *field_values
-            )
+            return self._e.remove_filtered_named_grouping_policy(ptype, field_index, *field_values)
 
     def add_function(self, name, func):
         """adds a customized function."""
@@ -480,7 +492,7 @@ class SyncedEnforcer:
         with self._rl:
             return self._e.get_implicit_roles_for_user(name, *domain)
 
-    def get_implicit_permissions_for_user(self, user, *domain):
+    def get_implicit_permissions_for_user(self, user, *domain, filter_policy_dom=True):
         """
         gets implicit permissions for a user or role.
         Compared to get_permissions_for_user(), this function retrieves permissions for inherited roles.
@@ -493,7 +505,24 @@ class SyncedEnforcer:
         But get_implicit_permissions_for_user("alice") will get: [["admin", "data1", "read"], ["alice", "data2", "read"]].
         """
         with self._rl:
-            return self._e.get_implicit_permissions_for_user(user, *domain)
+            return self._e.get_implicit_permissions_for_user(user, *domain, filter_policy_dom=filter_policy_dom)
+
+    def get_named_implicit_permissions_for_user(self, ptype, user, *domain, filter_policy_dom=True):
+        """
+        gets implicit permissions for a user or role by named policy.
+        Compared to get_permissions_for_user(), this function retrieves permissions for inherited roles.
+        For example:
+        p, admin, data1, read
+        p, alice, data2, read
+        g, alice, admin
+
+        get_permissions_for_user("alice") can only get: [["alice", "data2", "read"]].
+        But get_implicit_permissions_for_user("alice") will get: [["admin", "data1", "read"], ["alice", "data2", "read"]].
+        """
+        with self._rl:
+            return self._e.get_named_implicit_permissions_for_user(
+                ptype, user, *domain, filter_policy_dom=filter_policy_dom
+            )
 
     def get_implicit_users_for_permission(self, *permission):
         """
@@ -536,6 +565,11 @@ class SyncedEnforcer:
         with self._rl:
             return self._e.get_permissions_for_user_in_domain(user, domain)
 
+    def get_named_permissions_for_user_in_domain(self, ptype, user, domain):
+        """gets permissions for a user or role by named policy inside domain."""
+        with self._rl:
+            return self._e.get_named_permissions_for_user_in_domain(ptype, user, domain)
+
     def enable_auto_build_role_links(self, auto_build_role_links):
         """controls whether to rebuild the role inheritance relations when a role is added or deleted."""
         with self._wl:
@@ -558,10 +592,32 @@ class SyncedEnforcer:
         with self._wl:
             self._e.add_named_matching_func(ptype, fn)
 
+    def add_named_link_condition_func(self, ptype, user, role, fn):
+        """Add condition function fn for Link userName->roleName,
+        when fn returns true, Link is valid, otherwise invalid"""
+        with self._wl:
+            self._e.add_named_link_condition_func(ptype, user, role, fn)
+
     def add_named_domain_matching_func(self, ptype, fn):
         """add_named_domain_matching_func add MatchingFunc by ptype to RoleManager"""
         with self._wl:
             self._e.add_named_domain_matching_func(ptype, fn)
+
+    def add_named_domain_link_condition_func(self, ptype, user, role, domain, fn):
+        """Add condition function fn for Link userName-> {roleName, domain},
+        when fn returns true, Link is valid, otherwise invalid"""
+        with self._wl:
+            self._e.add_named_domain_link_condition_func(ptype, user, role, domain, fn)
+
+    def set_named_domain_link_condition_func_params(self, ptype, user, role, domain, *params):
+        """Sets the parameters of the condition function fn for Link userName->{roleName, domain}"""
+        with self._wl:
+            self._e.set_named_domain_link_condition_func_params(ptype, user, role, domain, *params)
+
+    def set_named_link_condition_func_params(self, ptype, user, role, *params):
+        """Sets the parameters of the condition function fn for Link userName->roleName"""
+        with self._wl:
+            self._e.set_named_link_condition_func_params(ptype, user, role, *params)
 
     def is_filtered(self):
         """returns true if the loaded policy has been filtered."""
@@ -596,7 +652,7 @@ class SyncedEnforcer:
             return self._e.remove_named_policies(ptype, rules)
 
     def add_grouping_policies(self, rules):
-        """adds role inheritance rulea to the current policy.
+        """adds role inheritance rules to the current policy.
 
         If the rule already exists, the function returns false for the corresponding policy rule and the rule will not be added.
         Otherwise the function returns true for the corresponding policy rule by adding the new rule.
@@ -613,9 +669,9 @@ class SyncedEnforcer:
             return self._e.add_named_grouping_policies(ptype, rules)
 
     def remove_grouping_policies(self, rules):
-        """removes role inheritance rulea from the current policy."""
+        """removes role inheritance rules from the current policy."""
         with self._wl:
-            return self._e.addremove_grouping_policies_policies(rules)
+            return self._e.remove_grouping_policies(rules)
 
     def remove_named_grouping_policies(self, ptype, rules):
         """removes role inheritance rules from the current named policy."""
@@ -623,6 +679,42 @@ class SyncedEnforcer:
             return self._e.remove_named_grouping_policies(ptype, rules)
 
     def build_incremental_role_links(self, op, ptype, rules):
-        self.get_model().build_incremental_role_links(
-            self.get_role_manager(), op, "g", ptype, rules
-        )
+        self.get_model().build_incremental_role_links(self.get_role_manager(), op, "g", ptype, rules)
+
+    def new_enforce_context(self, suffix: str) -> "EnforceContext":
+        return self._e.new_enforce_context(suffix)
+
+    def get_field_index(self, ptype, field):
+        """gets the index of the field name."""
+        return self._e.model.get_field_index(ptype, field)
+
+    def set_field_index(self, ptype, field, index):
+        """sets the index of the field name."""
+        assertion = self._e.model["p"][ptype]
+        assertion.field_index_map[field] = index
+
+    def get_all_roles_by_domain(self, domain):
+        """gets all roles associated with the domain.
+        note: Not applicable to Domains with inheritance relationship  (implicit roles)"""
+        with self._rl:
+            return self._e.get_all_roles_by_domain(domain)
+
+    def get_implicit_users_for_resource(self, resource):
+        """gets implicit user based on resource.
+        for example:
+            p, alice, data1, read
+            p, bob, data2, write
+            p, data2_admin, data2, read
+            p, data2_admin, data2, write
+            g, alice, data2_admin
+        get_implicit_users_for_resource("data2") will return [[bob data2 write] [alice data2 read] [alice data2 write]]
+        get_implicit_users_for_resource("data1") will return [[alice data1 read]]
+        Note: only users will be returned, roles (2nd arg in "g") will be excluded."""
+        with self._rl:
+            return self._e.get_implicit_users_for_resource(resource)
+
+    def get_implicit_users_for_resource_by_domain(self, resource, domain):
+        """get implicit user based on resource and domain.
+        Compared to GetImplicitUsersForResource, domain is supported"""
+        with self._rl:
+            return self._e.get_implicit_users_for_resource_by_domain(resource, domain)

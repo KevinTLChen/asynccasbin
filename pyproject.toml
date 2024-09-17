@@ -1,6 +1,25 @@
-[build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
+[tool.poetry]
+name = "asynccasbin"
+version = "0.1.0"
+description = "AsyncCasbin adapted from PyCasbin"
+authors = ["KevinTLChen <kevin_tl_chen@hotmail.com>"]
+license = "This project is licensed under the Apache 2.0 license."
+readme = "README.md"
+packages = [
+    { include = "casbin" }
 ]
-build-backend = "setuptools.build_meta"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+asyncio = "^3.4.3"
+simpleeval = "^0.9.13"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-benchmark = "^4.0.0"
+pytest-asyncio = "^0.24.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
