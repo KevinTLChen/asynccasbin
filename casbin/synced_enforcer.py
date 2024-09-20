@@ -36,38 +36,6 @@ class AtomicBool:
             self._value = value
 
 
-class PolicyLoaderThread(threading.Thread):
-    """
-    use eventloop to async load policy
-    """
-
-    def __init__(self, enforcer, interval=10):
-        super(PolicyLoaderThread, self).__init__(daemon=True)
-        self._interval = interval
-        self._stop = threading.Event()
-        self._io_loop = asyncio.get_event_loop()
-        self.enforcer = enforcer
-
-    async def task(self):
-        await self.enforcer.load_policy()
-
-    def run(self):
-        self._io_loop.create_task(self.task())  # loading policy at startup
-        while not self.stopped:
-            self._stop.wait(self._interval)
-            if self.stopped:
-                continue
-            self._io_loop.create_task(self.task())
-
-    def stop(self):
-        self._stop.set()
-        self._io_loop.close()
-
-    @property
-    def stopped(self):
-        return self._stop.is_set()
-
-
 class SyncedEnforcer:
     """SyncedEnforcer wraps Enforcer and provides synchronized access.
     It's also a drop-in replacement for Enforcer"""
@@ -80,6 +48,15 @@ class SyncedEnforcer:
         self._auto_loading = AtomicBool(False)
         self._auto_loading_thread = None
 
+    @classmethod
+    async def create(cls, model=None, adapter=None):
+        """A factory method that creates and initializes on instances with load_policy() asynchronously"""  # create an instance using the constructor
+        self = SyncedEnforcer(model, adapter)
+        # Do not initialize the full policy when using a filtered adapter
+        if self._e.adapter and not self._e.is_filtered():
+            await self._e.load_policy()
+        return self
+
     def is_auto_loading_running(self):
         """check if SyncedEnforcer is auto loading policies"""
         return self._auto_loading.value
@@ -88,7 +65,11 @@ class SyncedEnforcer:
         while self.is_auto_loading_running():
             time.sleep(interval)
             try:
-                self.load_policy()
+                # create new event loop to run async function
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(self.load_policy())
+                loop.close()
             except Exception as e:
                 self._e.logger.error(repr(e))
 
@@ -97,13 +78,16 @@ class SyncedEnforcer:
         if self.is_auto_loading_running():
             return
         self._auto_loading.value = True
-        self._auto_loading_thread = PolicyLoaderThread(enforcer=self, interval=interval)
+        self._auto_loading_thread = threading.Thread(
+            target=self._auto_load_policy,
+            args=[interval],
+            daemon=True,
+        )
         self._auto_loading_thread.start()
 
     def stop_auto_load_policy(self):
         """stops the thread started by start_auto_load_policy"""
         if self.is_auto_loading_running():
-            self._auto_loading_thread.stop()
             self._auto_loading.value = False
 
     def get_model(self):
@@ -169,7 +153,7 @@ class SyncedEnforcer:
 
     async def save_policy(self):
         with self._rl:
-            return self._e.save_policy()
+            return await self._e.save_policy()
 
     def build_role_links(self):
         """manually rebuild the role inheritance relations."""
@@ -288,41 +272,41 @@ class SyncedEnforcer:
         with self._rl:
             return self._e.has_named_policy(ptype, *params)
 
-    def add_policy(self, *params):
+    async def add_policy(self, *params):
         """adds an authorization rule to the current policy.
         If the rule already exists, the function returns false and the rule will not be added.
         Otherwise the function returns true by adding the new rule.
         """
         with self._wl:
-            return self._e.add_policy(*params)
+            return await self._e.add_policy(*params)
 
-    def add_named_policy(self, ptype, *params):
+    async def add_named_policy(self, ptype, *params):
         """adds an authorization rule to the current named policy.
         If the rule already exists, the function returns false and the rule will not be added.
         Otherwise the function returns true by adding the new rule.
         """
         with self._wl:
-            return self._e.add_named_policy(ptype, *params)
+            return await self._e.add_named_policy(ptype, *params)
 
-    def remove_policy(self, *params):
+    async def remove_policy(self, *params):
         """removes an authorization rule from the current policy."""
         with self._wl:
-            return self._e.remove_policy(*params)
+            return await self._e.remove_policy(*params)
 
-    def remove_filtered_policy(self, field_index, *field_values):
+    async def remove_filtered_policy(self, field_index, *field_values):
         """removes an authorization rule from the current policy, field filters can be specified."""
         with self._wl:
-            return self._e.remove_filtered_policy(field_index, *field_values)
+            return await self._e.remove_filtered_policy(field_index, *field_values)
 
-    def remove_named_policy(self, ptype, *params):
+    async def remove_named_policy(self, ptype, *params):
         """removes an authorization rule from the current named policy."""
         with self._wl:
-            return self._e.remove_named_policy(ptype, *params)
+            return await self._e.remove_named_policy(ptype, *params)
 
-    def remove_filtered_named_policy(self, ptype, field_index, *field_values):
+    async def remove_filtered_named_policy(self, ptype, field_index, *field_values):
         """removes an authorization rule from the current named policy, field filters can be specified."""
         with self._wl:
-            return self._e.remove_filtered_named_policy(ptype, field_index, *field_values)
+            return await self._e.remove_filtered_named_policy(ptype, field_index, *field_values)
 
     def has_grouping_policy(self, *params):
         """determines whether a role inheritance rule exists."""
@@ -334,41 +318,41 @@ class SyncedEnforcer:
         with self._rl:
             return self._e.has_named_grouping_policy(ptype, *params)
 
-    def add_grouping_policy(self, *params):
+    async def add_grouping_policy(self, *params):
         """adds a role inheritance rule to the current policy.
         If the rule already exists, the function returns false and the rule will not be added.
         Otherwise the function returns true by adding the new rule.
         """
         with self._wl:
-            return self._e.add_grouping_policy(*params)
+            return await self._e.add_grouping_policy(*params)
 
-    def add_named_grouping_policy(self, ptype, *params):
+    async def add_named_grouping_policy(self, ptype, *params):
         """adds a named role inheritance rule to the current policy.
         If the rule already exists, the function returns false and the rule will not be added.
         Otherwise the function returns true by adding the new rule.
         """
         with self._wl:
-            return self._e.add_named_grouping_policy(ptype, *params)
+            return await self._e.add_named_grouping_policy(ptype, *params)
 
-    def remove_grouping_policy(self, *params):
+    async def remove_grouping_policy(self, *params):
         """removes a role inheritance rule from the current policy."""
         with self._wl:
-            return self._e.remove_grouping_policy(*params)
+            return await self._e.remove_grouping_policy(*params)
 
-    def remove_filtered_grouping_policy(self, field_index, *field_values):
+    async def remove_filtered_grouping_policy(self, field_index, *field_values):
         """removes a role inheritance rule from the current policy, field filters can be specified."""
         with self._wl:
-            return self._e.remove_filtered_grouping_policy(field_index, *field_values)
+            return await self._e.remove_filtered_grouping_policy(field_index, *field_values)
 
-    def remove_named_grouping_policy(self, ptype, *params):
+    async def remove_named_grouping_policy(self, ptype, *params):
         """removes a role inheritance rule from the current named policy."""
         with self._wl:
-            return self._e.remove_named_grouping_policy(ptype, *params)
+            return await self._e.remove_named_grouping_policy(ptype, *params)
 
-    def remove_filtered_named_grouping_policy(self, ptype, field_index, *field_values):
+    async def remove_filtered_named_grouping_policy(self, ptype, field_index, *field_values):
         """removes a role inheritance rule from the current named policy, field filters can be specified."""
         with self._wl:
-            return self._e.remove_filtered_named_grouping_policy(ptype, field_index, *field_values)
+            return await self._e.remove_filtered_named_grouping_policy(ptype, field_index, *field_values)
 
     def add_function(self, name, func):
         """adds a customized function."""
@@ -392,77 +376,77 @@ class SyncedEnforcer:
         with self._rl:
             return self._e.has_role_for_user(name, role)
 
-    def add_role_for_user(self, user, role):
+    async def add_role_for_user(self, user, role):
         """
         adds a role for a user.
         Returns false if the user already has the role (aka not affected).
         """
         with self._wl:
-            return self._e.add_role_for_user(user, role)
+            return await self._e.add_role_for_user(user, role)
 
-    def delete_role_for_user(self, user, role):
+    async def delete_role_for_user(self, user, role):
         """
         deletes a role for a user.
         Returns false if the user does not have the role (aka not affected).
         """
         with self._wl:
-            return self._e.delete_role_for_user(user, role)
+            return await self._e.delete_role_for_user(user, role)
 
-    def delete_roles_for_user(self, user):
+    async def delete_roles_for_user(self, user):
         """
         deletes all roles for a user.
         Returns false if the user does not have any roles (aka not affected).
         """
         with self._wl:
-            return self._e.delete_roles_for_user(user)
+            return await self._e.delete_roles_for_user(user)
 
-    def delete_user(self, user):
+    async def delete_user(self, user):
         """
         deletes a user.
         Returns false if the user does not exist (aka not affected).
         """
         with self._wl:
-            return self._e.delete_user(user)
+            return await self._e.delete_user(user)
 
-    def delete_role(self, role):
+    async def delete_role(self, role):
         """
         deletes a role.
         Returns false if the role does not exist (aka not affected).
         """
         with self._wl:
-            return self._e.delete_role(role)
+            return await self._e.delete_role(role)
 
-    def delete_permission(self, *permission):
+    async def delete_permission(self, *permission):
         """
         deletes a permission.
         Returns false if the permission does not exist (aka not affected).
         """
         with self._wl:
-            return self._e.delete_permission(*permission)
+            return await self._e.delete_permission(*permission)
 
-    def add_permission_for_user(self, user, *permission):
+    async def add_permission_for_user(self, user, *permission):
         """
         adds a permission for a user or role.
         Returns false if the user or role already has the permission (aka not affected).
         """
         with self._wl:
-            return self._e.add_permission_for_user(user, *permission)
+            return await self._e.add_permission_for_user(user, *permission)
 
-    def delete_permission_for_user(self, user, *permission):
+    async def delete_permission_for_user(self, user, *permission):
         """
         deletes a permission for a user or role.
         Returns false if the user or role does not have the permission (aka not affected).
         """
         with self._wl:
-            return self._e.delete_permission_for_user(user, *permission)
+            return await self._e.delete_permission_for_user(user, *permission)
 
-    def delete_permissions_for_user(self, user):
+    async def delete_permissions_for_user(self, user):
         """
         deletes permissions for a user or role.
         Returns false if the user or role does not have any permissions (aka not affected).
         """
         with self._wl:
-            return self._e.delete_permissions_for_user(user)
+            return await self._e.delete_permissions_for_user(user)
 
     def get_permissions_for_user(self, user):
         """
@@ -548,17 +532,17 @@ class SyncedEnforcer:
         with self._rl:
             return self._e.get_users_for_role_in_domain(name, domain)
 
-    def add_role_for_user_in_domain(self, user, role, domain):
+    async def add_role_for_user_in_domain(self, user, role, domain):
         """adds a role for a user inside a domain."""
         """Returns false if the user already has the role (aka not affected)."""
         with self._wl:
-            return self._e.add_role_for_user_in_domain(user, role, domain)
+            return await self._e.add_role_for_user_in_domain(user, role, domain)
 
-    def delete_roles_for_user_in_domain(self, user, role, domain):
+    async def delete_roles_for_user_in_domain(self, user, role, domain):
         """deletes a role for a user inside a domain."""
         """Returns false if the user does not have any roles (aka not affected)."""
         with self._wl:
-            return self._e.delete_roles_for_user_in_domain(user, role, domain)
+            return await self._e.delete_roles_for_user_in_domain(user, role, domain)
 
     def get_permissions_for_user_in_domain(self, user, domain):
         """gets permissions for a user or role inside domain."""
@@ -624,59 +608,59 @@ class SyncedEnforcer:
         with self._rl:
             self._e.is_filtered()
 
-    def add_policies(self, rules):
+    async def add_policies(self, rules):
         """adds authorization rules to the current policy.
 
         If the rule already exists, the function returns false for the corresponding rule and the rule will not be added.
         Otherwise the function returns true for the corresponding rule by adding the new rule.
         """
         with self._wl:
-            return self._e.add_policies(rules)
+            return await self._e.add_policies(rules)
 
-    def add_named_policies(self, ptype, rules):
+    async def add_named_policies(self, ptype, rules):
         """adds authorization rules to the current named policy.
 
         If the rule already exists, the function returns false for the corresponding rule and the rule will not be added.
         Otherwise the function returns true for the corresponding by adding the new rule."""
         with self._wl:
-            return self._e.add_named_policies(ptype, rules)
+            return await self._e.add_named_policies(ptype, rules)
 
-    def remove_policies(self, rules):
+    async def remove_policies(self, rules):
         """removes authorization rules from the current policy."""
         with self._wl:
-            return self._e.remove_policies(rules)
+            return await self._e.remove_policies(rules)
 
-    def remove_named_policies(self, ptype, rules):
+    async def remove_named_policies(self, ptype, rules):
         """removes authorization rules from the current named policy."""
         with self._wl:
-            return self._e.remove_named_policies(ptype, rules)
+            return await self._e.remove_named_policies(ptype, rules)
 
-    def add_grouping_policies(self, rules):
+    async def add_grouping_policies(self, rules):
         """adds role inheritance rules to the current policy.
 
         If the rule already exists, the function returns false for the corresponding policy rule and the rule will not be added.
         Otherwise the function returns true for the corresponding policy rule by adding the new rule.
         """
         with self._wl:
-            return self._e.add_grouping_policies(rules)
+            return await self._e.add_grouping_policies(rules)
 
-    def add_named_grouping_policies(self, ptype, rules):
+    async def add_named_grouping_policies(self, ptype, rules):
         """ "adds named role inheritance rules to the current policy.
 
         If the rule already exists, the function returns false for the corresponding policy rule and the rule will not be added.
         Otherwise the function returns true for the corresponding policy rule by adding the new rule."""
         with self._wl:
-            return self._e.add_named_grouping_policies(ptype, rules)
+            return await self._e.add_named_grouping_policies(ptype, rules)
 
-    def remove_grouping_policies(self, rules):
+    async def remove_grouping_policies(self, rules):
         """removes role inheritance rules from the current policy."""
         with self._wl:
-            return self._e.remove_grouping_policies(rules)
+            return await self._e.remove_grouping_policies(rules)
 
-    def remove_named_grouping_policies(self, ptype, rules):
+    async def remove_named_grouping_policies(self, ptype, rules):
         """removes role inheritance rules from the current named policy."""
         with self._wl:
-            return self._e.remove_named_grouping_policies(ptype, rules)
+            return await self._e.remove_named_grouping_policies(ptype, rules)
 
     def build_incremental_role_links(self, op, ptype, rules):
         self.get_model().build_incremental_role_links(self.get_role_manager(), op, "g", ptype, rules)

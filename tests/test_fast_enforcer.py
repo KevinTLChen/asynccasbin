@@ -15,7 +15,7 @@
 import os
 import time
 from typing import Sequence
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 
 import casbin
 from casbin import FastPolicy
@@ -26,9 +26,10 @@ def get_examples(path):
     return os.path.abspath(examples_path + path)
 
 
-class TestCaseBase(TestCase):
-    def get_enforcer(self, model=None, adapter=None, cache_key_order: Sequence[int] = None):
-        return casbin.FastEnforcer(
+class TestCaseBase(IsolatedAsyncioTestCase):
+    async def get_enforcer(self, model=None, adapter=None, cache_key_order: Sequence[int] = None):
+        # create ans instance of the class, use await with the factory method
+        return await casbin.FastEnforcer.create(
             model,
             adapter,
             cache_key_order=cache_key_order,
@@ -36,12 +37,12 @@ class TestCaseBase(TestCase):
 
 
 class TestFastEnforcer(TestCaseBase):
-    def test_performance(self) -> None:
-        e1 = self.get_enforcer(
+    async def test_performance(self) -> None:
+        e1 = await self.get_enforcer(
             get_examples("performance/rbac_with_pattern_large_scale_model.conf"),
             get_examples("performance/rbac_with_pattern_large_scale_policy.csv"),
         )
-        e2 = self.get_enforcer(
+        e2 = await self.get_enforcer(
             get_examples("performance/rbac_with_pattern_large_scale_model.conf"),
             get_examples("performance/rbac_with_pattern_large_scale_policy.csv"),
             [2, 1],
@@ -54,16 +55,16 @@ class TestFastEnforcer(TestCaseBase):
         t_e2 = time.perf_counter() - s_e2
         assert t_e1 > t_e2 * 5
 
-    def test_creates_proper_policy(self) -> None:
-        e = self.get_enforcer(
+    async def test_creates_proper_policy(self) -> None:
+        e = await self.get_enforcer(
             get_examples("basic_model.conf"),
             get_examples("basic_policy.csv"),
             [2, 1],
         )
         self.assertIsInstance(e.model.model["p"]["p"].policy, FastPolicy)
 
-    def test_initializes_model(self) -> None:
-        e = self.get_enforcer(
+    async def test_initializes_model(self) -> None:
+        e = await self.get_enforcer(
             get_examples("basic_model.conf"),
             get_examples("basic_policy.csv"),
             [2, 1],
@@ -76,8 +77,8 @@ class TestFastEnforcer(TestCaseBase):
             ],
         )
 
-    def test_able_to_clear_policy(self) -> None:
-        e = self.get_enforcer(
+    async def test_able_to_clear_policy(self) -> None:
+        e = await self.get_enforcer(
             get_examples("basic_model.conf"),
             get_examples("basic_policy.csv"),
             [2, 1],
@@ -88,8 +89,8 @@ class TestFastEnforcer(TestCaseBase):
         self.assertIsInstance(e.model.model["p"]["p"].policy, FastPolicy)
         self.assertEqual(list(e.model.model["p"]["p"].policy), [])
 
-    def test_able_to_enforce_rule(self) -> None:
-        e = self.get_enforcer(
+    async def test_able_to_enforce_rule(self) -> None:
+        e = await self.get_enforcer(
             get_examples("basic_model.conf"),
             get_examples("basic_policy.csv"),
             [2, 1],

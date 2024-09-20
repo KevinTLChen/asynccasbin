@@ -194,12 +194,12 @@ class ManagementEnforcer(InternalEnforcer):
         """removes an authorization rule from the current named policy, field filters can be specified."""
         return await self._remove_filtered_policy("p", ptype, field_index, *field_values)
 
-    async def has_grouping_policy(self, *params):
+    def has_grouping_policy(self, *params):
         """determines whether a role inheritance rule exists."""
 
-        return await self.has_named_grouping_policy("g", *params)
+        return self.has_named_grouping_policy("g", *params)
 
-    async def has_named_grouping_policy(self, ptype, *params):
+    def has_named_grouping_policy(self, ptype, *params):
         """determines whether a named role inheritance rule exists."""
 
         if len(params) == 1 and isinstance(params[0], list):

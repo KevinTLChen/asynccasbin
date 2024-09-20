@@ -1,17 +1,7 @@
-from abc import ABCMeta, abstractmethod
+# NOTE: this file exists as a backwards compatible alias. please directly
+# use FilteredFileAdapter from `casbin.persist.adapters.filtered_file_adapter` instead.
 
+from .filtered_file_adapter import Filter
+from .filtered_file_adapter import FilteredFileAdapter as FilteredAdapter
 
-class FilteredAdapter(metaclass=ABCMeta):
-    """FilteredAdapter is the interface for async Casbin adapters supporting filtered policies."""
-
-    @abstractmethod
-    def is_filtered(self):
-        """IsFiltered returns true if the loaded policy has been filtered
-        Marks if the loaded policy is filtered or not
-        """
-        pass
-
-    @abstractmethod
-    async def load_filtered_policy(self, model, filter):
-        """Loads policy rules that match the filter from the storage."""
-        pass
+__all__ = ["Filter", "FilteredAdapter"]

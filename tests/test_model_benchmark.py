@@ -3,7 +3,6 @@ import datetime
 import logging
 import sys
 from tests.test_enforcer import get_examples, TestCaseBase
-from unittest import TestCase
 
 log = logging.getLogger(__name__)
 loglevel = logging.WARNING
@@ -20,10 +19,8 @@ def print_time_diff(start, end, time):
 
 
 class TestModelBenchmark(TestCaseBase):
-    def test_benchmark_basic_model(self):
-        e = self.get_enforcer(
-            get_examples("basic_model.conf"), get_examples("basic_policy.csv")
-        )
+    async def test_benchmark_basic_model(self):
+        e = await self.get_enforcer(get_examples("basic_model.conf"), get_examples("basic_policy.csv"))
 
         time = 10000
         start = datetime.datetime.now()
@@ -32,10 +29,8 @@ class TestModelBenchmark(TestCaseBase):
         end = datetime.datetime.now()
         print_time_diff(start, end, time)
 
-    def test_benchmark_rbac_model(self):
-        e = self.get_enforcer(
-            get_examples("rbac_model.conf"), get_examples("rbac_policy.csv")
-        )
+    async def test_benchmark_rbac_model(self):
+        e = await self.get_enforcer(get_examples("rbac_model.conf"), get_examples("rbac_policy.csv"))
 
         time = 10000
         start = datetime.datetime.now()
@@ -46,8 +41,9 @@ class TestModelBenchmark(TestCaseBase):
 
 
 class TestModelBenchmarkSynced(TestModelBenchmark):
-    def get_enforcer(self, model=None, adapter=None):
-        return casbin.SyncedEnforcer(
+    async def get_enforcer(self, model=None, adapter=None):
+        # create an instance of class, use await with the factory method
+        return await casbin.SyncedEnforcer.create(
             model,
             adapter,
         )

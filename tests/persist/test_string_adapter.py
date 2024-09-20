@@ -17,7 +17,7 @@ from tests import TestCaseBase
 
 
 class TestStringAdapter(TestCaseBase):
-    def test_key_match_rbac(self):
+    async def test_key_match_rbac(self):
         conf = """
 [request_definition]
 r = sub, obj, act
@@ -44,13 +44,13 @@ g, alice, data_group_admin
         adapter = StringAdapter(line)
         model = Model()
         model.load_model_from_text(conf)
-        e = self.get_enforcer(model, adapter)
+        e = await self.get_enforcer(model, adapter)
         sub = "alice"
         obj = "/alice_data/login"
         act = "POST"
         self.assertTrue(e.enforce(sub, obj, act))
 
-    def test_string_rbac(self):
+    async def test_string_rbac(self):
         conf = """
 [request_definition]
 r = sub, obj, act
@@ -76,7 +76,7 @@ g, alice, data_group_admin
         adapter = StringAdapter(line)
         model = Model()
         model.load_model_from_text(conf)
-        e = self.get_enforcer(model, adapter)
+        e = await self.get_enforcer(model, adapter)
         sub = "alice"
         obj = "data1"
         act = "read"

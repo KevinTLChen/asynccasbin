@@ -55,10 +55,10 @@ class FilteredFileAdapter(FileAdapter, FilteredAdapter):
         except Exception:
             raise RuntimeError("invalid filter type")
 
-        self.load_filtered_policy_file(model, filter_value, persist.load_policy_line)
+        await self.load_filtered_policy_file(model, filter_value, persist.load_policy_line)
         self.filtered = True
 
-    def load_filtered_policy_file(self, model, filter, hanlder):
+    async def load_filtered_policy_file(self, model, filter, hanlder):
         with open(self._file_path, "rb") as file:
             while True:
                 line = file.readline()

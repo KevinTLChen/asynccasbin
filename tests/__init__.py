@@ -20,8 +20,3 @@ from .test_filter import TestFilteredFileAdapter
 from .test_frontend import TestFrontend
 from .test_management_api import TestManagementApi, TestManagementApiSynced
 from .test_rbac_api import TestRbacApi, TestRbacApiSynced
-from . import benchmarks
-from . import config
-from . import model
-from . import rbac
-from . import util

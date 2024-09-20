@@ -24,6 +24,6 @@ class FilteredAdapter(Adapter):
         """
         pass
 
-    def load_filtered_policy(self, model, filter):
+    async def load_filtered_policy(self, model, filter):
         """Loads policy rules that match the filter from the storage."""
         pass

@@ -25,10 +25,7 @@ class DistributedEnforcer(SyncedEnforcer):
 
     @classmethod
     async def create(cls, model=None, adapter=None):
-        """
-        a factory method that creates and initializes on instances
-        with load_policy() asynchronously
-        """
+        """A factory method that creates and initializes on instances with load_policy() asynchronously"""
         # create an instance using the constructor
         self = DistributedEnforcer(model, adapter)
         # Do not initialize the full policy when using a filtered adapter

@@ -1,8 +1,485 @@
 # Semantic Versioning Changelog
 
-## [1.1.8]
+## [1.36.3](https://github.com/casbin/pycasbin/compare/v1.36.2...v1.36.3) (2024-06-24)
 
-- simpleeval broken dependencies fixed
+### Bug Fixes
+
+- KeyError: 'g' when build_role_links ([bf9cb44](https://github.com/casbin/pycasbin/commit/bf9cb4403f290b1313a86a2dce1c81eb36a043b0))
+
+## [1.36.2](https://github.com/casbin/pycasbin/compare/v1.36.1...v1.36.2) (2024-06-11)
+
+### Bug Fixes
+
+- field_index is incorrect in RBAC with domains mode ([#345](https://github.com/casbin/pycasbin/issues/345)) ([#346](https://github.com/casbin/pycasbin/issues/346)) ([9f6a379](https://github.com/casbin/pycasbin/commit/9f6a379d27d69366c156c8536ec48904c8b321ab))
+
+## [1.36.1](https://github.com/casbin/pycasbin/compare/v1.36.0...v1.36.1) (2024-05-21)
+
+### Bug Fixes
+
+- FastEnforcer not fast ([#344](https://github.com/casbin/pycasbin/issues/344)) ([8aef43b](https://github.com/casbin/pycasbin/commit/8aef43bcd03943a860c2cb530f499e67eac38375))
+
+# [1.36.0](https://github.com/casbin/pycasbin/compare/v1.35.0...v1.36.0) (2024-02-09)
+
+### Features
+
+- Added support for async watcher callbacks [#340](https://github.com/casbin/pycasbin/issues/340) ([#341](https://github.com/casbin/pycasbin/issues/341)) ([c04d832](https://github.com/casbin/pycasbin/commit/c04d83237264178624780d70ab6dee89854ac87b))
+
+# [1.35.0](https://github.com/casbin/pycasbin/compare/v1.34.0...v1.35.0) (2024-01-11)
+
+### Features
+
+- support up to Python 3.12 ([6dea204](https://github.com/casbin/pycasbin/commit/6dea20476328b947cf1e4e837acf340e371655c6))
+
+# [1.34.0](https://github.com/casbin/pycasbin/compare/v1.33.0...v1.34.0) (2023-12-28)
+
+### Features
+
+- add interface stubs for async adapters ([#335](https://github.com/casbin/pycasbin/issues/335)) ([d557189](https://github.com/casbin/pycasbin/commit/d557189eecee788e81d20ceae3cb1dee16a84ae7))
+
+# [1.33.0](https://github.com/casbin/pycasbin/compare/v1.32.0...v1.33.0) (2023-10-25)
+
+### Features
+
+- change log level to warning ([#329](https://github.com/casbin/pycasbin/issues/329)) ([124d2c0](https://github.com/casbin/pycasbin/commit/124d2c05a69d61c17fe16c4ef0ad1423f62e0bbb))
+
+# [1.32.0](https://github.com/casbin/pycasbin/compare/v1.31.2...v1.32.0) (2023-10-18)
+
+### Features
+
+- fix integer priority sorting ([#327](https://github.com/casbin/pycasbin/issues/327)) ([d5cd58a](https://github.com/casbin/pycasbin/commit/d5cd58a738ad8e8ad0a5010f9cff904736e1719a))
+
+## [1.31.2](https://github.com/casbin/pycasbin/compare/v1.31.1...v1.31.2) (2023-10-06)
+
+### Bug Fixes
+
+- use pre defined member ([#325](https://github.com/casbin/pycasbin/issues/325)) ([4f191f0](https://github.com/casbin/pycasbin/commit/4f191f09a48a61b597fb73b62a841a69407dd292))
+
+## [1.31.1](https://github.com/casbin/pycasbin/compare/v1.31.0...v1.31.1) (2023-09-30)
+
+### Bug Fixes
+
+- disabled all logger ([#324](https://github.com/casbin/pycasbin/issues/324)) ([ae81a52](https://github.com/casbin/pycasbin/commit/ae81a5225b4a045c6eba4f3bae6dade68b92b78a))
+
+# [1.31.0](https://github.com/casbin/pycasbin/compare/v1.30.0...v1.31.0) (2023-09-24)
+
+### Features
+
+- add temporal role model ([#320](https://github.com/casbin/pycasbin/issues/320)) ([09ff119](https://github.com/casbin/pycasbin/commit/09ff1191856345b69026e5fa86a361dd5df8bab5))
+
+# [1.30.0](https://github.com/casbin/pycasbin/compare/v1.29.0...v1.30.0) (2023-09-23)
+
+### Features
+
+- disable logger when log is not enabled ([#321](https://github.com/casbin/pycasbin/issues/321)) ([952c208](https://github.com/casbin/pycasbin/commit/952c208a9d423a86ac4ae6c7fa5ed15bc94e00dc))
+
+# [1.29.0](https://github.com/casbin/pycasbin/compare/v1.28.0...v1.29.0) (2023-09-23)
+
+### Features
+
+- Fixed the `subjectPriority` sorting algorithm and support for checking the subject role link loop ([#322](https://github.com/casbin/pycasbin/issues/322)) ([f964e2a](https://github.com/casbin/pycasbin/commit/f964e2aecbee28e4f9b8d1b4fba0d68cad0879fa))
+
+# [1.28.0](https://github.com/casbin/pycasbin/compare/v1.27.0...v1.28.0) (2023-09-16)
+
+### Features
+
+- port fastbin to casbin ([#318](https://github.com/casbin/pycasbin/issues/318)) ([67537d6](https://github.com/casbin/pycasbin/commit/67537d6799d04266f5d27bc3f86fa44db1676821))
+
+# [1.27.0](https://github.com/casbin/pycasbin/compare/v1.26.0...v1.27.0) (2023-09-03)
+
+### Features
+
+- add get_implicit_users_for_resource api ([#317](https://github.com/casbin/pycasbin/issues/317)) ([8172097](https://github.com/casbin/pycasbin/commit/817209768528f249644bbe7ac30f1d235bd192da))
+
+# [1.26.0](https://github.com/casbin/pycasbin/compare/v1.25.0...v1.26.0) (2023-08-31)
+
+### Features
+
+- add get_all_roles_by_domain api ([#316](https://github.com/casbin/pycasbin/issues/316)) ([22507ca](https://github.com/casbin/pycasbin/commit/22507ca7cc47746a03a97b1d051e209ea4ef96d1))
+
+# [1.25.0](https://github.com/casbin/pycasbin/compare/v1.24.0...v1.25.0) (2023-08-30)
+
+### Features
+
+- add key_match5 function for matcher ([#315](https://github.com/casbin/pycasbin/issues/315)) ([7d29109](https://github.com/casbin/pycasbin/commit/7d29109d67d8f60c6be9fca6b4aaff523a8c156e))
+
+# [1.24.0](https://github.com/casbin/pycasbin/compare/v1.23.1...v1.24.0) (2023-08-27)
+
+### Features
+
+- add field_index_map and constant ([#314](https://github.com/casbin/pycasbin/issues/314)) ([e42f3da](https://github.com/casbin/pycasbin/commit/e42f3da582f6d864c1c70b00679af9da560fe0f4))
+
+## [1.23.1](https://github.com/casbin/pycasbin/compare/v1.23.0...v1.23.1) (2023-08-10)
+
+### Bug Fixes
+
+- fix bug in add policy for priority effectors ([#313](https://github.com/casbin/pycasbin/issues/313)) ([8d30537](https://github.com/casbin/pycasbin/commit/8d30537149eeea433441ca62802f3bf06e1fd42c))
+
+# [1.23.0](https://github.com/casbin/pycasbin/compare/v1.22.0...v1.23.0) (2023-08-06)
+
+### Features
+
+- add AsyncEnforcer to pycasbin ([#307](https://github.com/casbin/pycasbin/issues/307)) ([4192dc2](https://github.com/casbin/pycasbin/commit/4192dc22dab3673b44c87d7dee059bd790c12c60))
+
+# [1.22.0](https://github.com/casbin/pycasbin/compare/v1.21.0...v1.22.0) (2023-07-14)
+
+### Features
+
+- update logger for more precise log level and format control ([#306](https://github.com/casbin/pycasbin/issues/306)) ([5c688d7](https://github.com/casbin/pycasbin/commit/5c688d7db2c7f5139e2192a0a21d3b2ba3f0807b))
+
+# [1.21.0](https://github.com/casbin/pycasbin/compare/v1.20.0...v1.21.0) (2023-07-10)
+
+### Features
+
+- add string adapter ([#304](https://github.com/casbin/pycasbin/issues/304)) ([784a46f](https://github.com/casbin/pycasbin/commit/784a46f8f403cf18572c22c8779dc1e3dca315ca))
+
+# [1.20.0](https://github.com/casbin/pycasbin/compare/v1.19.0...v1.20.0) (2023-07-07)
+
+### Features
+
+- add auto_notify_watcher to core enforcer ([#303](https://github.com/casbin/pycasbin/issues/303)) ([15de222](https://github.com/casbin/pycasbin/commit/15de2223d08e4d53555e747a4e549c327344412c))
+
+# [1.19.0](https://github.com/casbin/pycasbin/compare/v1.18.3...v1.19.0) (2023-05-24)
+
+### Features
+
+- Add batch_enforce() API ([#298](https://github.com/casbin/pycasbin/issues/298)) ([361af9b](https://github.com/casbin/pycasbin/commit/361af9bc76492b975d454d9f479b3703248fc509))
+
+## [1.18.3](https://github.com/casbin/pycasbin/compare/v1.18.2...v1.18.3) (2023-05-22)
+
+### Bug Fixes
+
+- Exclude tests from package ([#297](https://github.com/casbin/pycasbin/issues/297)) ([9b014a2](https://github.com/casbin/pycasbin/commit/9b014a226058947424f87408ea14176f20183031))
+- Stop including README as top-level data file in package ([#296](https://github.com/casbin/pycasbin/issues/296)) ([e85e9b9](https://github.com/casbin/pycasbin/commit/e85e9b91aca3007fc4aab292689302eaae27cf02))
+
+## [1.18.2](https://github.com/casbin/pycasbin/compare/v1.18.1...v1.18.2) (2023-04-06)
+
+### Bug Fixes
+
+- load policy rule without splitting custom functions ([#293](https://github.com/casbin/pycasbin/issues/293)) ([fbc4261](https://github.com/casbin/pycasbin/commit/fbc42616620fcbe089cfcf459ec9eaa441fc33e1))
+
+## [1.18.1](https://github.com/casbin/pycasbin/compare/v1.18.0...v1.18.1) (2023-04-01)
+
+### Bug Fixes
+
+- support escaping comma inside quote in load_policy_line()'s CSV parsing ([#292](https://github.com/casbin/pycasbin/issues/292)) ([51e6e7c](https://github.com/casbin/pycasbin/commit/51e6e7c34d8ebcef666d34a6f10f457bfc0c31d0))
+
+# [1.18.0](https://github.com/casbin/pycasbin/compare/v1.17.6...v1.18.0) (2023-03-07)
+
+### Features
+
+- revert "fix: avoid duplicate adapter entries ([#259](https://github.com/casbin/pycasbin/issues/259))" ([#290](https://github.com/casbin/pycasbin/issues/290)) ([b573041](https://github.com/casbin/pycasbin/commit/b573041270acbc9e217ee673792b31e74239b7c7))
+
+## [1.17.6](https://github.com/casbin/pycasbin/compare/v1.17.5...v1.17.6) (2023-02-09)
+
+### Bug Fixes
+
+- fix typo in remove_grouping_policies() API ([#287](https://github.com/casbin/pycasbin/issues/287)) ([747f71d](https://github.com/casbin/pycasbin/commit/747f71d2f629affa4aa0d15115e5cb61b4f4b732))
+
+## [1.17.5](https://github.com/casbin/pycasbin/compare/v1.17.4...v1.17.5) (2022-12-05)
+
+### Bug Fixes
+
+- polish import grammar and remove some useless package ([#282](https://github.com/casbin/pycasbin/issues/282)) ([be53e0b](https://github.com/casbin/pycasbin/commit/be53e0b9e0d8863919de4cdd5f0185f5eea0779d))
+
+## [1.17.4](https://github.com/casbin/pycasbin/compare/v1.17.3...v1.17.4) (2022-11-01)
+
+### Bug Fixes
+
+- fix bug in autoloader error handling ([#275](https://github.com/casbin/pycasbin/issues/275)) ([e6f03ce](https://github.com/casbin/pycasbin/commit/e6f03ce165d447534dcd2149928115eb5afed51e))
+
+## [1.17.3](https://github.com/casbin/pycasbin/compare/v1.17.2...v1.17.3) (2022-11-01)
+
+### Bug Fixes
+
+- load_policy changed the old model ([#277](https://github.com/casbin/pycasbin/issues/277)) ([f247231](https://github.com/casbin/pycasbin/commit/f247231f1f18aae87773c02739d0b15fb9164c0a))
+
+## [1.17.2](https://github.com/casbin/pycasbin/compare/v1.17.1...v1.17.2) (2022-10-20)
+
+### Bug Fixes
+
+- catch exceptions in synced enforcer thread ([#272](https://github.com/casbin/pycasbin/issues/272)) ([ff35627](https://github.com/casbin/pycasbin/commit/ff3562764343f08030fe13fcd884bbe169945b87))
+
+## [1.17.1](https://github.com/casbin/pycasbin/compare/v1.17.0...v1.17.1) (2022-08-28)
+
+### Bug Fixes
+
+- some typos ([#270](https://github.com/casbin/pycasbin/issues/270)) ([7705e25](https://github.com/casbin/pycasbin/commit/7705e25fe33d59877d54116ad9855795ebaeaf51))
+
+# [1.17.0](https://github.com/casbin/pycasbin/compare/v1.16.11...v1.17.0) (2022-08-08)
+
+### Features
+
+- add watcher-ex call ([#269](https://github.com/casbin/pycasbin/issues/269)) ([f4bc0c0](https://github.com/casbin/pycasbin/commit/f4bc0c05b6578c6d08410410d7bc54dfd690e6e5))
+
+## [1.16.11](https://github.com/casbin/pycasbin/compare/v1.16.10...v1.16.11) (2022-07-30)
+
+### Bug Fixes
+
+- update support python version ([#268](https://github.com/casbin/pycasbin/issues/268)) ([b4ddcbb](https://github.com/casbin/pycasbin/commit/b4ddcbb7a36896b231f589ea04271e52630e7bb2))
+
+## [1.16.10](https://github.com/casbin/pycasbin/compare/v1.16.9...v1.16.10) (2022-07-30)
+
+### Bug Fixes
+
+- add key_get() for builtin_operators ([#267](https://github.com/casbin/pycasbin/issues/267)) ([29d3e39](https://github.com/casbin/pycasbin/commit/29d3e3944953590eaea59a9a0ab042d097d09d97))
+
+## [1.16.9](https://github.com/casbin/pycasbin/compare/v1.16.8...v1.16.9) (2022-07-10)
+
+### Bug Fixes
+
+- add benchmark for glob match ([#265](https://github.com/casbin/pycasbin/issues/265)) ([0c6b09f](https://github.com/casbin/pycasbin/commit/0c6b09fbd342a29913ec0fda3550fc8271f287b3))
+
+## [1.16.8](https://github.com/casbin/pycasbin/compare/v1.16.7...v1.16.8) (2022-06-26)
+
+### Bug Fixes
+
+- add dependency for benchmark ([#262](https://github.com/casbin/pycasbin/issues/262)) ([4f3e71f](https://github.com/casbin/pycasbin/commit/4f3e71fadb17cf41381e3315b795a23e007bf23b))
+- add more example of globmatch and add unit test for it ([#263](https://github.com/casbin/pycasbin/issues/263)) ([42d65d2](https://github.com/casbin/pycasbin/commit/42d65d2b74b22cc1b10b9dc96a8fc960e8af3f72))
+
+## [1.16.7](https://github.com/casbin/pycasbin/compare/v1.16.6...v1.16.7) (2022-06-26)
+
+### Bug Fixes
+
+- add import statement in tests module ([#264](https://github.com/casbin/pycasbin/issues/264)) ([8d83b84](https://github.com/casbin/pycasbin/commit/8d83b8461af74b9dd39e2e9652921d969d735c7c))
+
+## [1.16.6](https://github.com/casbin/pycasbin/compare/v1.16.5...v1.16.6) (2022-06-22)
+
+### Bug Fixes
+
+- Set the default log level to warning ([#261](https://github.com/casbin/pycasbin/issues/261)) ([9a48e5d](https://github.com/casbin/pycasbin/commit/9a48e5d89a49c09fcd6bde445a1f11aaca1da5b9))
+
+## [1.16.5](https://github.com/casbin/pycasbin/compare/v1.16.4...v1.16.5) (2022-05-20)
+
+### Bug Fixes
+
+- avoid duplicate adapter entries ([#259](https://github.com/casbin/pycasbin/issues/259)) ([8d74386](https://github.com/casbin/pycasbin/commit/8d7438687518f58ba945c822b36d1c9e5188316e))
+
+## [1.16.4](https://github.com/casbin/pycasbin/compare/v1.16.3...v1.16.4) (2022-05-13)
+
+### Bug Fixes
+
+- avoid raising exception in remove_grouping_policy ([#257](https://github.com/casbin/pycasbin/issues/257)) ([39e17b4](https://github.com/casbin/pycasbin/commit/39e17b45cf8880a0db9e30f84def55801bf199d7)), closes [#250](https://github.com/casbin/pycasbin/issues/250) [#250](https://github.com/casbin/pycasbin/issues/250)
+
+## [1.16.3](https://github.com/casbin/pycasbin/compare/v1.16.2...v1.16.3) (2022-04-30)
+
+### Bug Fixes
+
+- different behavior of glob_match from other casbin ([#254](https://github.com/casbin/pycasbin/issues/254)) ([49b6a04](https://github.com/casbin/pycasbin/commit/49b6a0467ff4e84838a4b61ee79fe66af0e9de25))
+
+## [1.16.2](https://github.com/casbin/pycasbin/compare/v1.16.1...v1.16.2) (2022-04-30)
+
+### Bug Fixes
+
+- allow permissions management to use additional p-types ([#256](https://github.com/casbin/pycasbin/issues/256)) ([37892e1](https://github.com/casbin/pycasbin/commit/37892e1b1578db42543ec81e0120ebda3492afc7))
+
+## [1.16.1](https://github.com/casbin/pycasbin/compare/v1.16.0...v1.16.1) (2022-04-29)
+
+### Bug Fixes
+
+- add lint config ([#255](https://github.com/casbin/pycasbin/issues/255)) ([4890433](https://github.com/casbin/pycasbin/commit/4890433f8d828ca94233b0fe005af56617409b64))
+
+# [1.16.0](https://github.com/casbin/pycasbin/compare/v1.15.5...v1.16.0) (2022-04-27)
+
+### Features
+
+- update_filtered_policies ([#249](https://github.com/casbin/pycasbin/issues/249)) ([ca84dac](https://github.com/casbin/pycasbin/commit/ca84dac37292457b12647611e1f6a63358daf9c6))
+
+## [1.15.5](https://github.com/casbin/pycasbin/compare/v1.15.4...v1.15.5) (2022-04-16)
+
+### Bug Fixes
+
+- load policy override role manager ([#252](https://github.com/casbin/pycasbin/issues/252)) ([97280c5](https://github.com/casbin/pycasbin/commit/97280c549b7a151a60d15fea63f4e0b141eb2c24))
+
+## [1.15.4](https://github.com/casbin/pycasbin/compare/v1.15.3...v1.15.4) (2022-01-13)
+
+### Bug Fixes
+
+- [#238](https://github.com/casbin/pycasbin/issues/238), avoid calling has_eval in enforcing loop ([#240](https://github.com/casbin/pycasbin/issues/240)) ([8188b27](https://github.com/casbin/pycasbin/commit/8188b274e7954838c0717c10f2b772b47130b1e8))
+
+## [1.15.3](https://github.com/casbin/pycasbin/compare/v1.15.2...v1.15.3) (2022-01-13)
+
+### Bug Fixes
+
+- [#239](https://github.com/casbin/pycasbin/issues/239), not allowing more than 9 types of policies/requests ([dcf4392](https://github.com/casbin/pycasbin/commit/dcf43924bbdd59901d1b6632a5a1796ad546cc09))
+
+## [1.15.2](https://github.com/casbin/pycasbin/compare/v1.15.1...v1.15.2) (2021-12-17)
+
+### Bug Fixes
+
+- Apache 2.0 license headers ([#233](https://github.com/casbin/pycasbin/issues/233)) ([16e4f0a](https://github.com/casbin/pycasbin/commit/16e4f0a0f82ac93688e1b735b3da173929524107))
+- disabled casbin should allow all requests ([#235](https://github.com/casbin/pycasbin/issues/235)) ([ecd4ff8](https://github.com/casbin/pycasbin/commit/ecd4ff8cbee8dede7923eb7d617cc251e0de5582))
+
+### Performance Improvements
+
+- judge whether use domain_matching_func ([#232](https://github.com/casbin/pycasbin/issues/232)) ([bb12c0f](https://github.com/casbin/pycasbin/commit/bb12c0f03c1a30cfb8e3cf3e77b4d1b6c0aad1d4))
+
+## [1.15.2](https://github.com/casbin/pycasbin/compare/v1.15.1...v1.15.2) (2021-12-15)
+
+### Bug Fixes
+
+- Apache 2.0 license headers ([#233](https://github.com/casbin/pycasbin/issues/233)) ([16e4f0a](https://github.com/casbin/pycasbin/commit/16e4f0a0f82ac93688e1b735b3da173929524107))
+
+## [1.15.1](https://github.com/casbin/pycasbin/compare/v1.15.0...v1.15.1) (2021-12-13)
+
+### Performance Improvements
+
+- add pytest-benchmark and judge whether use regex in rabc ([#228](https://github.com/casbin/pycasbin/issues/228)) ([252c288](https://github.com/casbin/pycasbin/commit/252c288e20c138b97b7cd58aa3c47d4434b0c742))
+
+# [1.15.0](https://github.com/casbin/pycasbin/compare/v1.14.0...v1.15.0) (2021-12-11)
+
+### Features
+
+- subject priority ([#231](https://github.com/casbin/pycasbin/issues/231)) ([b38169d](https://github.com/casbin/pycasbin/commit/b38169dbf3d122e17d764e058ef13915a1861eec))
+
+# [1.14.0](https://github.com/casbin/pycasbin/compare/v1.13.0...v1.14.0) (2021-12-09)
+
+### Features
+
+- casbin_js_get_permission_for_user ([#229](https://github.com/casbin/pycasbin/issues/229)) ([075ca10](https://github.com/casbin/pycasbin/commit/075ca1078ea850498bc058767524468cdf05458d))
+
+# [1.13.0](https://github.com/casbin/pycasbin/compare/v1.12.0...v1.13.0) (2021-12-08)
+
+### Features
+
+- get implicit permissions filter policies domain by matching function ([#226](https://github.com/casbin/pycasbin/issues/226)) ([e16dfb3](https://github.com/casbin/pycasbin/commit/e16dfb3c2992b0195b99b2aa07f30569d5d273af))
+
+# [1.12.0](https://github.com/casbin/pycasbin/compare/v1.11.1...v1.12.0) (2021-11-27)
+
+### Features
+
+- support matching functions to filter policies ([#222](https://github.com/casbin/pycasbin/issues/222)) ([9d0528d](https://github.com/casbin/pycasbin/commit/9d0528db85b8aedfc6b337f3d98bad19c64103e7))
+
+## [1.11.1](https://github.com/casbin/pycasbin/compare/v1.11.0...v1.11.1) (2021-11-21)
+
+### Bug Fixes
+
+- add glob_match() test cases from Go to Python ([658d3bb](https://github.com/casbin/pycasbin/commit/658d3bb189749a06089c678f708d546e26aebe11))
+
+# [1.11.0](https://github.com/casbin/pycasbin/compare/v1.10.1...v1.11.0) (2021-11-21)
+
+### Features
+
+- ignore policies with domain when get_implicit_permissions_for_user ([5ca47b7](https://github.com/casbin/pycasbin/commit/5ca47b7224299d07c19d80c9e2e4846a4135f151))
+
+## [1.10.1](https://github.com/casbin/pycasbin/compare/v1.10.0...v1.10.1) (2021-11-21)
+
+### Bug Fixes
+
+- linter bug in test_enforcer.py ([782f229](https://github.com/casbin/pycasbin/commit/782f229f3bc39d8743731a0ce860d827dba14dab))
+
+# [1.10.0](https://github.com/casbin/pycasbin/compare/v1.9.7...v1.10.0) (2021-11-20)
+
+### Features
+
+- port the test case of add_function() example to pycasbin ([#217](https://github.com/casbin/pycasbin/issues/217)) ([c19d065](https://github.com/casbin/pycasbin/commit/c19d0658687bfb4e0a59c7323024c2842b226d56))
+
+## [1.9.7](https://github.com/casbin/pycasbin/compare/v1.9.6...v1.9.7) (2021-11-18)
+
+### Bug Fixes
+
+- reimplement default role manager ([b8f7fa7](https://github.com/casbin/pycasbin/commit/b8f7fa7fd515e70b685a4d044fa3d568935ae337))
+
+## [1.9.6](https://github.com/casbin/pycasbin/compare/v1.9.5...v1.9.6) (2021-11-12)
+
+### Bug Fixes
+
+- replace build_role_links with build_incremental_role_links ([1d60cd3](https://github.com/casbin/pycasbin/commit/1d60cd36887995b034dca7561179e13e9aae0c9f))
+
+## [1.9.5](https://github.com/casbin/pycasbin/compare/v1.9.4...v1.9.5) (2021-11-12)
+
+### Bug Fixes
+
+- remove_filtered_policy_returns_effects inconsistent input with remove_filtered_policy ([#211](https://github.com/casbin/pycasbin/issues/211)) ([e7e6696](https://github.com/casbin/pycasbin/commit/e7e669675c4d4225b96a3d391da04433926f9726))
+
+## [1.9.4](https://github.com/casbin/pycasbin/compare/v1.9.3...v1.9.4) (2021-10-29)
+
+### Bug Fixes
+
+- load_policy_line function load error ([bca7eed](https://github.com/casbin/pycasbin/commit/bca7eed0cf61ecab381ed462921b776ec6aa7e3c))
+
+## [1.9.3](https://github.com/casbin/pycasbin/compare/v1.9.2...v1.9.3) (2021-10-24)
+
+### Bug Fixes
+
+- update simpleeval version to 0.9.11 ([79fdf21](https://github.com/casbin/pycasbin/commit/79fdf212639263c44be4c27b545017e3b50863b0))
+
+## [1.9.2](https://github.com/casbin/pycasbin/compare/v1.9.1...v1.9.2) (2021-09-29)
+
+### Bug Fixes
+
+- 'keyMatch4' not defined([#198](https://github.com/casbin/pycasbin/issues/198)) ([#199](https://github.com/casbin/pycasbin/issues/199)) ([b888965](https://github.com/casbin/pycasbin/commit/b888965c080df08c6415f45e606a24ba45698b90))
+
+## [1.9.1](https://github.com/casbin/pycasbin/compare/v1.9.0...v1.9.1) (2021-09-28)
+
+### Bug Fixes
+
+- added utf8 encoding ([#194](https://github.com/casbin/pycasbin/issues/194)) ([6b42210](https://github.com/casbin/pycasbin/commit/6b42210031ce7383823f17a2b8134a58f5f5a71d))
+
+# [1.9.0](https://github.com/casbin/pycasbin/compare/v1.8.1...v1.9.0) (2021-09-25)
+
+### Features
+
+- add explicit priority support ([#190](https://github.com/casbin/pycasbin/issues/190)) ([9445086](https://github.com/casbin/pycasbin/commit/94450866a6e3103df8a42fc76893f91e0cb555a4))
+
+## [1.8.1](https://github.com/casbin/pycasbin/compare/v1.8.0...v1.8.1) (2021-09-16)
+
+### Bug Fixes
+
+- fm instance property ([#189](https://github.com/casbin/pycasbin/issues/189)) ([e06078a](https://github.com/casbin/pycasbin/commit/e06078ada44ba9b3d794367bc8f52c1547dd2249))
+
+# [1.8.0](https://github.com/casbin/pycasbin/compare/v1.7.0...v1.8.0) (2021-08-31)
+
+### Features
+
+- PyCasbin Watcher interfaces added ([#186](https://github.com/casbin/pycasbin/issues/186)) ([d98429f](https://github.com/casbin/pycasbin/commit/d98429f02ac130fc5b7c4ad1448d967998c3d891))
+
+# [1.7.0](https://github.com/casbin/pycasbin/compare/v1.6.0...v1.7.0) (2021-08-29)
+
+### Features
+
+- support in operator on list/set and other compound types ([3f6ee8f](https://github.com/casbin/pycasbin/commit/3f6ee8f0069ce0a3e0554b5143403a28c6afdfc1))
+
+# [1.6.0](https://github.com/casbin/pycasbin/compare/v1.5.0...v1.6.0) (2021-08-27)
+
+### Features
+
+- key_match4 builtin operator added ([#183](https://github.com/casbin/pycasbin/issues/183)) ([ef127b3](https://github.com/casbin/pycasbin/commit/ef127b352313fb17b3010d5a9bb5029e732c1546))
+
+# [1.5.0](https://github.com/casbin/pycasbin/compare/v1.4.0...v1.5.0) (2021-08-17)
+
+### Features
+
+- multiple request, policy, effect, matcher type support ([#181](https://github.com/casbin/pycasbin/issues/181)) ([468503b](https://github.com/casbin/pycasbin/commit/468503b1c573ac835e55eb4d0d6d23b638030c63))
+
+# [1.4.0](https://github.com/casbin/pycasbin/compare/v1.3.0...v1.4.0) (2021-07-19)
+
+### Features
+
+- finish up UpdateAdapter ([#177](https://github.com/casbin/pycasbin/issues/177)) ([d69a2df](https://github.com/casbin/pycasbin/commit/d69a2dfa7711aebcf7cec880fa724f5d3b3d3944))
+
+# [1.3.0](https://github.com/casbin/pycasbin/compare/v1.2.1...v1.3.0) (2021-07-04)
+
+### Features
+
+- add API for role manager besides "g" ([#173](https://github.com/casbin/pycasbin/issues/173)) ([23d39a5](https://github.com/casbin/pycasbin/commit/23d39a56da06968ab76659a30b430054c45db14b))
+
+## [1.2.1](https://github.com/casbin/pycasbin/compare/v1.2.0...v1.2.1) (2021-06-30)
+
+### Bug Fixes
+
+- matching_func works with multiply match ([#172](https://github.com/casbin/pycasbin/issues/172)) ([bbe45ad](https://github.com/casbin/pycasbin/commit/bbe45ad8a526477d0c0ca3c3915896e85cbfb2f4))
+
+# [1.2.0](https://github.com/casbin/pycasbin/compare/v1.1.3...v1.2.0) (2021-06-27)
+
+### Features
+
+- add support for add_domain_matching_function ([#165](https://github.com/casbin/pycasbin/issues/165)) ([19b9503](https://github.com/casbin/pycasbin/commit/19b9503ced6e75ec9a818e2fb1803319ea997166))
+
+## [1.1.3](https://github.com/casbin/pycasbin/compare/v1.1.2...v1.1.3) (2021-06-16)
+
+### Bug Fixes
+
+- get_implicit_users_for_permission() ([#168](https://github.com/casbin/pycasbin/issues/168)) ([92e1110](https://github.com/casbin/pycasbin/commit/92e1110e18b73cf993935bbf9db3bfb79be59e67))
 
 ## [1.1.2](https://github.com/casbin/pycasbin/compare/v1.1.1...v1.1.2) (2021-06-07)
 

@@ -14,6 +14,16 @@ class FastEnforcer(Enforcer):
         self._cache_key_order = cache_key_order
         super().__init__(model, adapter, enable_log)
 
+    @classmethod
+    async def create(cls, model=None, adapter=None, enable_log=False, cache_key_order: Sequence[int] = None):
+        """A factory method that creates and initializes on instances with load_policy() asynchronously"""
+        # create an instance using the constructor
+        self = FastEnforcer(model, adapter, enable_log, cache_key_order)
+        # Do not initialize the full policy when using a filtered adapter
+        if self.adapter and not self.is_filtered():
+            await self.load_policy()
+        return self
+
     def new_model(self, path="", text=""):
         """creates a model."""
         if self._cache_key_order is None:

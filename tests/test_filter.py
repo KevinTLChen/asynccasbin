@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import casbin
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from tests.test_enforcer import get_examples
 from casbin.persist.adapters import FilteredFileAdapter
 
@@ -24,8 +24,8 @@ class Filter:
     G = []
 
 
-class TestFilteredFileAdapter(TestCase):
-    async def test_init_filtered_adapter(self):
+class TestFilteredFileAdapter(IsolatedAsyncioTestCase):
+    def test_init_filtered_adapter(self):
         adapter = FilteredFileAdapter(get_examples("rbac_with_domains_policy.csv"))
         e = casbin.Enforcer(get_examples("rbac_with_domains_model.conf"), adapter)
         self.assertFalse(e.has_policy(["admin", "domain1", "data1", "read"]))
@@ -38,20 +38,20 @@ class TestFilteredFileAdapter(TestCase):
         filter.G = ["", "", "domain1"]
         try:
             await e.load_policy()
-        except:
+        except Exception:
             raise RuntimeError("unexpected error in LoadFilteredPolicy")
-        self.assertTrue(await e.has_policy(["admin", "domain1", "data1", "read"]))
-        self.assertTrue(await e.has_policy(["admin", "domain2", "data2", "read"]))
+        self.assertTrue(e.has_policy(["admin", "domain1", "data1", "read"]))
+        self.assertTrue(e.has_policy(["admin", "domain2", "data2", "read"]))
         try:
             await e.load_filtered_policy(filter)
-        except:
+        except Exception:
             raise RuntimeError("unexpected error in LoadFilteredPolicy")
 
         if not e.is_filtered:
             raise RuntimeError("adapter did not set the filtered flag correctly")
 
-        self.assertTrue(await e.has_policy(["admin", "domain1", "data1", "read"]))
-        self.assertFalse(await e.has_policy(["admin", "domain2", "data2", "read"]))
+        self.assertTrue(e.has_policy(["admin", "domain1", "data1", "read"]))
+        self.assertFalse(e.has_policy(["admin", "domain2", "data2", "read"]))
 
         with self.assertRaises(RuntimeError):
             await e.save_policy()
@@ -67,30 +67,30 @@ class TestFilteredFileAdapter(TestCase):
         filter.G = ["", "", "domain1"]
         try:
             await e.load_policy()
-        except:
+        except Exception:
             raise RuntimeError("unexpected error in LoadFilteredPolicy")
-        self.assertTrue(await e.has_policy(["admin", "domain1", "data1", "read"]))
-        self.assertTrue(await e.has_policy(["admin", "domain2", "data2", "read"]))
+        self.assertTrue(e.has_policy(["admin", "domain1", "data1", "read"]))
+        self.assertTrue(e.has_policy(["admin", "domain2", "data2", "read"]))
         try:
             await e.load_filtered_policy(filter)
-        except:
+        except Exception:
             raise RuntimeError("unexpected error in LoadFilteredPolicy")
 
         if not e.is_filtered:
             raise RuntimeError("adapter did not set the filtered flag correctly")
 
-        self.assertTrue(await e.has_policy(["admin", "domain1", "data1", "read"]))
-        self.assertFalse(await e.has_policy(["admin", "domain2", "data2", "read"]))
+        self.assertTrue(e.has_policy(["admin", "domain1", "data1", "read"]))
+        self.assertFalse(e.has_policy(["admin", "domain2", "data2", "read"]))
 
         filter.P = ["", "domain2"]
         filter.G = ["", "", "domain2"]
         try:
             await e.load_increment_filtered_policy(filter)
-        except:
+        except Exception:
             raise RuntimeError("unexpected error in LoadFilteredPolicy")
 
-        self.assertTrue(await e.has_policy(["admin", "domain1", "data1", "read"]))
-        self.assertTrue(await e.has_policy(["admin", "domain2", "data2", "read"]))
+        self.assertTrue(e.has_policy(["admin", "domain1", "data1", "read"]))
+        self.assertTrue(e.has_policy(["admin", "domain2", "data2", "read"]))
 
     async def test_filtered_policy_invalid_filter(self):
         adapter = FilteredFileAdapter(get_examples("rbac_with_domains_policy.csv"))
@@ -106,7 +106,7 @@ class TestFilteredFileAdapter(TestCase):
 
         try:
             await e.load_filtered_policy(None)
-        except:
+        except Exception:
             raise RuntimeError("unexpected error in LoadFilteredPolicy")
 
         if e.is_filtered():
@@ -114,7 +114,7 @@ class TestFilteredFileAdapter(TestCase):
 
         try:
             await e.save_policy()
-        except:
+        except Exception:
             raise RuntimeError("unexpected error in SavePolicy")
 
     async def test_unsupported_filtered_policy(self):

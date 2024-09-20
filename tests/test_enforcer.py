@@ -22,7 +22,6 @@ from casbin import util
 
 def get_examples(path):
     examples_path = os.path.split(os.path.realpath(__file__))[0] + "/../examples/"
-    # examples_path = os.path.normpath(os.getcwd()).replace(os.path.sep, "/") + "/examples/"
     return os.path.abspath(examples_path + path)
 
 
@@ -571,7 +570,8 @@ class TestConfig(TestCaseBase):
 
 class TestConfigSynced(TestConfig):
     async def get_enforcer(self, model=None, adapter=None):
-        return casbin.SyncedEnforcer(
+        # create ans instance of the class, use await with the factory method
+        return await casbin.SyncedEnforcer.create(
             model,
             adapter,
         )
